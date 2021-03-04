@@ -1,0 +1,19 @@
+{
+  "name": "ventaonline",
+  "version": "1.0.0",
+  "description": "Proyecto venta online NodeJs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jixpanel2019108/VentaOnline.git"
+  },
+  "author": "Jonatan Ixpanel",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jixpanel2019108/VentaOnline/issues"
+  },
+  "homepage": "https://github.com/jixpanel2019108/VentaOnline#readme"
+}
