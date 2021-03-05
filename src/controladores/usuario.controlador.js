@@ -26,6 +26,37 @@ function login(req,res){
     })
 }
 
+function registrarCliente(req,res){
+    var usuarioModel = new Usuario;
+    var params = req.body;
+
+    if (params.usuario && params.password){
+        usuarioModel.usuario = params.usuario;
+        usuarioModel.rol = 'Cliente'
+        Usuario.find({usuario: usuarioModel.usuario}).exec((err, usuarioEncontrado) => {
+            if (err) return res.status(500).send({mensaje:'Error en la peticion de usuario'})
+            if (usuarioEncontrado && usuarioEncontrado.length >= 1){
+                return res.status(500).send({mensaje:'El usuario ya existe'})
+            }else{
+                bcrypt.hash(params.password,null,null,(err,passwordEncriptada) => {
+                    usuarioModel.password = passwordEncriptada;
+                    usuarioModel.save((err, usuarioGuardado) => {
+                        if (err) res.status(500).send({mensaje:'Error en la peticion al servidor'})
+                        if(usuarioGuardado){
+                            return res.status(200).send(usuarioGuardado);
+                        }else{
+                            return res.status(500).send({mensaje:'Error al guardar usuario'})
+                        }
+                    })
+                })
+            }
+        })
+    }else{
+        return res.status(500).send({mensaje:'Llene todos los campos porfavor'})
+    }
+}
+
 module.exports = {
-    login
+    login,
+    registrarCliente
 }

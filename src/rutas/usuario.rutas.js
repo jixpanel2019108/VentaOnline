@@ -10,5 +10,6 @@ var md_autenticacion = require('../middlewares/authenticated');
 //RUTAS
 var api = express.Router();
 api.post('/login', usuarioControlador.login);
+api.post('/registrarCliente', usuarioControlador.registrarCliente)
 
 module.exports = api;
