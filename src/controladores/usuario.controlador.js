@@ -2,6 +2,7 @@
 const Usuario = require('../modelos/usuario.model');
 const bcrypt = require('bcrypt-nodejs');
 const jwt = require('../servicios/jwt');
+const { resourceLimits } = require('worker_threads');
 
 function login(req,res){
     var params = req.body;
@@ -56,7 +57,42 @@ function registrarCliente(req,res){
     }
 }
 
+function registrarAdmin(req,res){
+    var usuarioModel = new Usuario();
+    var params = req.body;
+    if (req.user.rol != 'Administrador') return res.status(500).send({mensaje:'Solo los administradores pueden registrar Administradores'})
+    if(params.usuario && params.password && params.rol){
+        usuarioModel.usuario = params.usuario;
+        usuarioModel.rol = params.rol;
+        Usuario.find({usuario:usuarioModel.usuario}).exec((err, usuarioEncontrado) => {
+            if (err) return res.status(500).send({mensaje:'Error en la obtencion de usuario'});
+            if (usuarioEncontrado && usuarioEncontrado.length >= 1){
+                return res.status(500).send({mensaje: 'El usuario ya existe'})
+            }else{
+                if(params.rol == 'Administrador' || params.rol == 'Cliente'){
+                    bcrypt.hash(params.password,null,null,(err, passwordEncriptada) => {
+                        usuarioModel.password = passwordEncriptada;
+                        usuarioModel.save((err, usuarioGuardado) =>{
+                            if (err) return res.status(500).send({mensaje:'Error al guardar Usuario'});
+                            if(usuarioGuardado){
+                                return res.status(200).send(usuarioGuardado);
+                            }else{
+                                return res.status(500).send({mensaje:'Error al guardar el usuario en contrasena'})
+                            }
+                        })
+                    })
+                }else{
+                    return res.status(500).send({mensaje:`Error al ingresar rol, para un Administrador usar 'Administrador' y para un clliente usar 'Cliente'`})
+                }
+            }
+        })
+    }else{
+        return res.status(500).send({mensaje:'Ingrese todos los datos porfavor'});
+    }
+}
+
 module.exports = {
     login,
-    registrarCliente
+    registrarCliente,
+    registrarAdmin
 }
