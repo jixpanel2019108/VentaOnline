@@ -10,8 +10,9 @@ var md_autenticacion = require('../middlewares/authenticated');
 //RUTAS
 var api = express.Router();
 api.post('/login', usuarioControlador.login);
-api.post('/registrarCliente', usuarioControlador.registrarCliente)
+api.post('/registrarCliente', usuarioControlador.registrarCliente);
 api.post('/registrarAdmin', md_autenticacion.ensureAuth, usuarioControlador.registrarAdmin);
-api.put('/editarRol/:idUsuario', md_autenticacion.ensureAuth, usuarioControlador.editarRol)
+api.put('/editarRol/:idUsuario', md_autenticacion.ensureAuth, usuarioControlador.editarRol);
+api.put('/editarUsuario/:idUsuario', md_autenticacion.ensureAuth, usuarioControlador.editarUsuario);
 
 module.exports = api;

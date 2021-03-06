@@ -95,7 +95,7 @@ function editarRol(req,res){
     var params = req.body;
     delete params.password;
     if (req.user.rol != 'Administrador') return res.status(500).send({mensaje:'Solo los administradores pueden editar Administradores'})
-    if(params.rol == 'Administrador'){
+    if(params.rol == 'Administrador' || params.rol == 'Cliente'){
         Usuario.findOneAndUpdate({_id:idUsuario, rol:'Cliente'},{rol: params.rol},{new:true, useFindAndModify: false},(err, usuarioActualizado) => {
             if (err) return res.status(500).send({mensaje: 'Error en la peticion no se puede actializar usuarios Administradores'});
             if (!usuarioActualizado) return res.status(500).send({mensaje:'Error no se puede actializar usuarios Administradores'})
@@ -103,13 +103,29 @@ function editarRol(req,res){
             return res.status(200).send({usuarioActualizado});
         })
     }else{
-        return res.status(500).send({mensaje:`Error al ingresar rol, para un Administrador usar 'Administrador'`})
+        return res.status(500).send({mensaje:`Error al ingresar rol, para un Administrador usar 'Administrador' y para un clliente usar 'Cliente'`})
     }
+}
+
+function editarUsuario(req,res){
+    var idUsuario = req.params.idUsuario;
+    var params = req.body;
+    delete params.password;
+
+    if (req.user.rol != 'Administrador') return res.status(500).send({mensaje:'Solo los administradores pueden editar'})
+    Usuario.findOneAndUpdate({_id:idUsuario, rol:'Cliente'},{usuario:params.usuario},{new:true, useFindAndModify: false},(err, usuarioEncontrado) => {
+        if (err) return res.status(500).send({mensaje:'Error en la peticion'});
+        if (!usuarioEncontrado) return res.status(500).send({mensaje:'Error solo se puede editar usuarios Clientes'})
+
+        return res.status(200).send({usuarioEncontrado});
+    })
+    
 }
 
 module.exports = {
     login,
     registrarCliente,
     registrarAdmin,
-    editarRol
+    editarRol,
+    editarUsuario
 }
