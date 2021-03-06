@@ -122,10 +122,23 @@ function editarUsuario(req,res){
     
 }
 
+function eliminarUsuario(req,res){
+    var idUsuario = req.params.idUsuario;
+
+    if (req.user.rol != 'Administrador') return res.status(500).send({mensaje:'Solo un administrador tiene permiso de eliminar'})
+    Usuario.findOneAndDelete({_id:idUsuario, rol:'Cliente'},(err, usuarioEliminado) =>{
+        if (err) return res.status(500).send({mensaje:'Error en la peticion de eliminacion'});
+        if(!usuarioEliminado) return res.status(500).send({mensaje:'Error, solo puede eliminar a clientes'});
+
+        return res.status(200).send({usuarioEliminado: usuarioEliminado});
+    })
+}
+
 module.exports = {
     login,
     registrarCliente,
     registrarAdmin,
     editarRol,
-    editarUsuario
+    editarUsuario,
+    eliminarUsuario
 }

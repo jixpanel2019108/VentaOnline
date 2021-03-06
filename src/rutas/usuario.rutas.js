@@ -14,5 +14,6 @@ api.post('/registrarCliente', usuarioControlador.registrarCliente);
 api.post('/registrarAdmin', md_autenticacion.ensureAuth, usuarioControlador.registrarAdmin);
 api.put('/editarRol/:idUsuario', md_autenticacion.ensureAuth, usuarioControlador.editarRol);
 api.put('/editarUsuario/:idUsuario', md_autenticacion.ensureAuth, usuarioControlador.editarUsuario);
+api.delete('/eliminarUsuario/:idUsuario', md_autenticacion.ensureAuth, usuarioControlador.eliminarUsuario);
 
 module.exports = api;
