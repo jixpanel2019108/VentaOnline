@@ -12,5 +12,6 @@ var api = express.Router();
 api.post('/login', usuarioControlador.login);
 api.post('/registrarCliente', usuarioControlador.registrarCliente)
 api.post('/registrarAdmin', md_autenticacion.ensureAuth, usuarioControlador.registrarAdmin);
+api.put('/editarRol/:idUsuario', md_autenticacion.ensureAuth, usuarioControlador.editarRol)
 
 module.exports = api;
