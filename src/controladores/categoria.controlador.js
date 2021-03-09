@@ -1,5 +1,4 @@
 'use strict'
-const { findByIdAndDelete } = require('../modelos/categoria.model');
 const Categoria = require('../modelos/categoria.model')
 
 function agregarCategoria(req,res){
@@ -59,9 +58,20 @@ function eliminarCategoria(req,res){
     })
 }
 
+function obtenerCategoriaCliente(req,res){
+    if (req.user.rol != 'Cliente') return res.status(500).send({mensaje:'Esta funcion es para clientes'})
+    Categoria.find({},(err,categoriasEncontradas) =>{
+        if (err) return res.status(401).send({mensaje:'Error en la peticion de categorias'});
+        if (!categoriasEncontradas) return res.status(500).send({mensaje:'Error en la peticion'});
+
+        return res.status(200).send(categoriasEncontradas);
+    })
+}
+
 module.exports = {
     agregarCategoria,
     obtenerCategoria,
     editarCategoria,
-    eliminarCategoria
+    eliminarCategoria,
+    obtenerCategoriaCliente
 }

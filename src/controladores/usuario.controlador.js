@@ -128,7 +128,6 @@ function editarUsuario(req,res){
 
         return res.status(200).send({usuarioEncontrado});
     })
-    
 }
 
 function eliminarUsuario(req,res){
@@ -143,11 +142,46 @@ function eliminarUsuario(req,res){
     })
 }
 
+function editarUsuarioCliente(req,res){
+    var idUsuario = req.params.idUsuario;
+    var params = req.body;
+    delete params.password;
+
+    if (req.user.rol != 'Cliente') return res.status(500).send({mensaje:'Solo los clientes tienen esta funcion'})
+    Usuario.findOne({_id:idUsuario}, (err, usuarioValidacion) =>{
+        if(usuarioValidacion._id != req.user.sub) return res.status(500).send({mensaje:'No puede editar un usuario que no sea el suyo'})
+        Usuario.findOneAndUpdate({_id:idUsuario},{usuario:params.usuario},{new:true, useFindAndModify: false},(err, usuarioEncontrado) => {
+            if (err) return res.status(500).send({mensaje:'Error en la peticion'});
+            if (!usuarioEncontrado) return res.status(500).send({mensaje:'Error solo se puede editar usuarios Clientes'})
+            
+            return res.status(200).send({usuarioEncontrado});
+        })
+    })
+    
+}
+
+function eliminarCuentaCliente(req,res){
+    var idUsuario = req.params.idUsuario;
+
+    if (req.user.rol != 'Cliente') return res.status(500).send({mensaje:'Solo los clientes tienen esta funcion'})
+    Usuario.findOne({_id:idUsuario},(err, usuarioValidacion) =>{
+        if (usuarioValidacion._id != req.user.sub) return res.status(500).send({mensaje: 'No puede eliminar un usuario que no sea el suyo'})
+        Usuario.findOneAndDelete({_id:idUsuario},(err, usuarioEliminado) =>{
+            if (err) return res.status(500).send({mensaje:'Error en la peticion de eliminacion'});
+            if(!usuarioEliminado) return res.status(500).send({mensaje:'Error, solo puede eliminar a clientes'});
+    
+            return res.status(200).send({usuarioEliminado: usuarioEliminado});
+        })
+    })
+}
+
 module.exports = {
     login,
     registrarCliente,
     registrarAdmin,
     editarRol,
     editarUsuario,
-    eliminarUsuario
+    eliminarUsuario,
+    editarUsuarioCliente,
+    eliminarCuentaCliente
 }

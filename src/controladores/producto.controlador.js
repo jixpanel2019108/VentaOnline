@@ -62,9 +62,47 @@ function editarProducto(req,res){
     })
 }
 
+function obtenerProductoNombre(req,res){
+    var params = req.body;
+
+    if(req.user.rol != 'Cliente') return res.status(500).send({mensaje:'Solo los clientes tienen esta funcion'});
+    Producto.findOne({producto:{$regex:params.producto,$options:'i'}},(err, productoEncontrado) => {
+        if (err) return res.status(500).send({mensaje:'Error en la peticion a producto'})
+        if (!productoEncontrado) return res.status(500).send({mensaje:'El producto no existe'});
+        
+        return res.status(200).send({productoEncontrado:productoEncontrado})
+    })
+}
+
+function obtenerProductoIdCategoria(req,res){
+    var params = req.body;
+    var idCategoria = req.params.idCategoria
+
+    if(req.user.rol != 'Cliente') return res.status(500).send({mensaje:'Solo los clientes tienen esta funcion'});
+    Producto.find({categoria:idCategoria},(err, productosEncontrado) => {
+        if (err) return res.status(500).send({mensaje:'Error en la peticion a productos'})
+        if (!productosEncontrado) return res.status(500).send({mensaje:'Error al obtener datos'});
+        
+        return res.status(200).send({productosEncontrado:productosEncontrado})
+    })
+}
+
+function productosMasVendidos(req,res){
+    if (req.user.rol != 'Cliente') return res.status(500).send({mensaje:'Solo los clientes tiene esta funcion'})
+    Producto.find({},{producto:1,cantidadVendida:1},(err, productoEncontrado) => {
+        if (err) return res.status(500).send({mensaje: 'Erroraso papa'})
+        if (!productoEncontrado) return res.status({mensaje:'MMMmm... error xd'})
+
+        return res.status(200).send({ProductosMasVendidos:productoEncontrado})
+    }).sort({cantidadVendida:-1}).limit(3)
+}
+
 module.exports = {
     registrarProducto,
     obtenerProductoId,
     obtenerProductos,
-    editarProducto
+    editarProducto,
+    obtenerProductoNombre,
+    obtenerProductoIdCategoria,
+    productosMasVendidos
 }

@@ -9,6 +9,7 @@ api.post('/agregarCategoria', md_autenticacion.ensureAuth, categoriaControlador.
 api.get('/obtenerCategoria', md_autenticacion.ensureAuth, categoriaControlador.obtenerCategoria);
 api.put('/editarCategoria/:idCategoria', md_autenticacion.ensureAuth, categoriaControlador.editarCategoria);
 api.delete('/eliminarCategoria/:idCategoria', md_autenticacion.ensureAuth, categoriaControlador.eliminarCategoria);
+api.get('/obtenerCategoriaCliente', md_autenticacion.ensureAuth, categoriaControlador.obtenerCategoriaCliente)
 
 
 module.exports = api;
