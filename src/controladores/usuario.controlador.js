@@ -1,5 +1,6 @@
 'use strict'
 const Usuario = require('../modelos/usuario.model');
+const Carrito = require('../modelos/carrito.model')
 const bcrypt = require('bcrypt-nodejs');
 const jwt = require('../servicios/jwt');
 
@@ -43,6 +44,7 @@ function registrarCliente(req,res){
                     usuarioModel.save((err, usuarioGuardado) => {
                         if (err) res.status(500).send({mensaje:'Error en la peticion al servidor'})
                         if(usuarioGuardado){
+                            crearCarrito(usuarioGuardado._id);
                             return res.status(200).send(usuarioGuardado);
                         }else{
                             return res.status(500).send({mensaje:'Error al guardar usuario'})
@@ -54,6 +56,13 @@ function registrarCliente(req,res){
     }else{
         return res.status(500).send({mensaje:'Llene todos los campos porfavor'})
     }
+}
+
+function crearCarrito(idUsuario){
+    var carritoModel = new Carrito();
+    carritoModel.usuarioCarrito = idUsuario;
+    carritoModel.total = 0;
+    carritoModel.save();
 }
 
 function registrarAdmin(req,res){

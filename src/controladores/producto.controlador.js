@@ -25,7 +25,6 @@ function registrarProducto(req,res){
             return res.status(200).send({productoGuardado})
         })
     })
-    
 }
 
 function obtenerProductoId(req,res){
