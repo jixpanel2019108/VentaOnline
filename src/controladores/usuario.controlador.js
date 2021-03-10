@@ -60,6 +60,7 @@ function registrarCliente(req,res){
 
 function crearCarrito(idUsuario){
     var carritoModel = new Carrito();
+    carritoModel.listaProductos =[]
     carritoModel.usuarioCarrito = idUsuario;
     carritoModel.total = 0;
     carritoModel.save();
