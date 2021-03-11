@@ -85,6 +85,9 @@ function registrarAdmin(req,res){
                         usuarioModel.save((err, usuarioGuardado) =>{
                             if (err) return res.status(500).send({mensaje:'Error al guardar Usuario'});
                             if(usuarioGuardado){
+                                if (usuarioGuardado.rol == 'Cliente'){
+                                    crearCarrito(usuarioGuardado._id);
+                                }
                                 return res.status(200).send(usuarioGuardado);
                             }else{
                                 return res.status(500).send({mensaje:'Error al guardar el usuario en contrasena'})

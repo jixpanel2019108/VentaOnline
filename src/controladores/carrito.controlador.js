@@ -12,7 +12,7 @@ function llevarProductoCarrito(req,res){
     Producto.findById(idProducto).exec((err, productoEncontrado) =>{
         if (err) return res.status(500).send({mensaje:'Error al hacer la peticion a productos'})
         if (productoEncontrado.cantidad < params.cantidad) return res.status(500).send({mensaje:`No hay productos suficientes lo maximo que puede escoger es ${productoEncontrado.cantidad}`});
-        if (!productoEncontrado) return res.status(500).send({mensaje:'Error al buscar usuarios'})
+        if (!productoEncontrado) return res.status(500).send({mensaje:'Error al buscar productos'})
         if (productoEncontrado.cantidad == 0) return res.status(500).send({mensaje:'No hay existencias'})
 
         var integerCantidad = parseInt(params.cantidad,10);
@@ -25,7 +25,8 @@ function llevarProductoCarrito(req,res){
             //return console.log(productoSearch)
             if (!productoSearch){
                 //SIGNIFICA QUE AUN NO EXISTE EL PRODUCTO ESE EN EL CARRITO
-                Carrito.findOneAndUpdate({usuarioCarrito:idUsuario}, {$push:{listaProductos:{cantidad:integerCantidad,precio:productoEncontrado.precio, subTotal:subTotalFinal, idProducto:idProducto}}},
+                Carrito.findOneAndUpdate({usuarioCarrito:idUsuario}, 
+                    {$push:{listaProductos:{producto:productoEncontrado.producto,precio:productoEncontrado.precio, cantidad:integerCantidad, subTotal:subTotalFinal, idProducto:idProducto}}},
                     {new:true, useFindAndModify: false}, (err, productoAgregado) => {
                     if (err) return res.status(500).send({mensaje:'Error en la peticion'});
                     if (!productoAgregado) return res.status(500).send({mensaje:'Error al ingresar los datos'});
@@ -47,9 +48,7 @@ function llevarProductoCarrito(req,res){
                     var subTotalArray = productosArray[indice].subTotal;
                     var idProductoArray = productosArray[indice].idProducto;
 
-                    console.log('Holaaaa')
                     if (req.params.idProducto == idProductoArray) {
-                        //return console.log(req.params.idProducto)
                         productosArray.forEach(function(elemento){
                             if (elemento.idProducto == idProducto){
                                 Carrito.findOneAndUpdate({usuarioCarrito:req.user.sub, "listaProductos.idProducto":idProducto},

@@ -35,6 +35,38 @@ function generarFactura(req,res){
     })
 }
 
+function obtenerProductosFactura(req,res){
+    var idFactura = req.params.idFactura;
+    if (req.user.rol != 'Administrador') return res.status(500).send({mensaje:'Solo los administradores tienen esta funcion'});
+    
+    Factura.findById(idFactura,{"listaProductos.producto":1,"listaProductos.precio":1,"listaProductos.cantidad":1,"listaProductos.subTotal":1},
+    (err,facturaEncontrada)=>{
+        return res.status(200).send({ProductosEncontradosEnLaFactura:facturaEncontrada})
+    })
+}
+
+function obtenerFacturasUsuarios(req,res){
+    if (req.user.rol != 'Administrador') return res.status(500).send({mensaje:'Solo los administradores tienen esta funcion'});
+    
+    Factura.find({},(err, facturasEncontradas) => {
+        return res.status(200).send(facturasEncontradas)
+    })
+}
+
+function obtenerMisFacturas(req,res){
+    if (req.user.rol != 'Cliente') return res.status(500).send({mensaje:'Solo los administradores tienen esta funcion'});
+    Factura.find({usuarioFactura:req.user.sub},{"listaProductos.producto":1,"listaProductos.precio":1,"listaProductos.cantidad":1,"listaProductos.subTotal":1,total:1},
+        (err,facturasEncontradas) => {
+        if (err) return res.status(500).send({mensaje:'Error en la peticion'});
+        if (!facturasEncontradas) return res.status(500).send({mensaje:'Error al obtener facturas'});
+
+        return res.status(200).send({facturasEncontradas:facturasEncontradas})
+    })
+}
+
 module.exports = {
-    generarFactura
+    generarFactura,
+    obtenerProductosFactura,
+    obtenerFacturasUsuarios,
+    obtenerMisFacturas
 }
