@@ -89,12 +89,56 @@ function obtenerProductoIdCategoria(req,res){
 
 function productosMasVendidos(req,res){
     if (req.user.rol != 'Cliente') return res.status(500).send({mensaje:'Solo los clientes tiene esta funcion'})
-    Producto.find({},{producto:1,cantidadVendida:1},(err, productoEncontrado) => {
-        if (err) return res.status(500).send({mensaje: 'Erroraso papa'})
-        if (!productoEncontrado) return res.status({mensaje:'MMMmm... error xd'})
+    Producto.find({},{_id:0,producto:1,cantidadVendida:1},(err, productoEncontrado) => {
+        if (err) return res.status(500).send({mensaje: 'Error al hacer la peticion'})
+        if (!productoEncontrado) return res.status({mensaje:'Error al obtener productos'})
 
         return res.status(200).send({ProductosMasVendidos:productoEncontrado})
-    }).sort({cantidadVendida:-1}).limit(3)
+    }).sort({cantidadVendida:-1}).limit(5)
+}
+
+function productosMasVendidosAdmin(req,res){
+    if (req.user.rol != 'Administrador') return res.status(500).send({mensaje:'Tiene que ser administrador para esta funcion'})
+    Producto.find({},{_id:0,producto:1,cantidadVendida:1},(err, productoEncontrado) => {
+        if (err) return res.status(500).send({mensaje: 'Error al hacer la peticion'})
+        if (!productoEncontrado) return res.status({mensaje:'Error al obtener productos'})
+
+        return res.status(200).send({ProductosMasVendidos:productoEncontrado})
+    }).sort({cantidadVendida:-1}).limit(5)
+}
+
+function obtenerProductosAgotados(req,res){
+    if (req.user.rol != 'Administrador') return res.status(500).send({mensaje:'Tiene que ser administrador para esta funcion'})
+    Producto.find({cantidad:0},{_id:0,producto:1,cantidad:1},(err,productosEncontrados) => {
+        if (err) return res.status(500).send({mensaje: 'Error al hacer la peticion'})
+        if (!productosEncontrados) return res.status({mensaje:'Error al obtener productos'})
+
+        return res.status(200).send(productosEncontrados)
+    })
+}
+
+function eliminarProducto(req,res){
+    var idProducto = req.params.idProducto;
+    if (req.user.rol != 'Administrador') return res.status(500).send({mensaje:'Tiene que ser administrador para esta funcion'})
+    Producto.findByIdAndDelete(idProducto,(err,productoEliminado) => {
+        if (err) return res.status(500).send({mensaje:'Error en la peticion'});
+        if(!productoEliminado) return res.status(500).send({mensaje:'Error al obtener datos'})
+
+        return res.status(200).send({ProductoEliminado:productoEliminado});
+    })
+}
+
+function editarStock(req,res){
+    var params = req.body;
+    var idProducto = req.params.idProducto;
+
+    if(req.user.rol != 'Administrador') return res.status(500).send({mensaje:'Solo los administradores pueden editar'});
+    Producto.findByIdAndUpdate(idProducto,{cantidad: params.cantidad},{new:true, useFindAndModify: false},(err, productoActualizado) => {
+        if (err) return res.status(500).send({mensaje:'Error en la peticion de actualizar'})
+        if (!productoActualizado) return res.status(500).send({mensaje:'Error al actualizar datos'});
+
+        return res.status(200).send({productoActualizado})
+    })
 }
 
 module.exports = {
@@ -104,5 +148,9 @@ module.exports = {
     editarProducto,
     obtenerProductoNombre,
     obtenerProductoIdCategoria,
-    productosMasVendidos
+    productosMasVendidos,
+    productosMasVendidosAdmin,
+    obtenerProductosAgotados,
+    eliminarProducto,
+    editarStock
 }

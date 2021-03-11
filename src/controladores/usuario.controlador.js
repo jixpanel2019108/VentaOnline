@@ -1,6 +1,7 @@
 'use strict'
 const Usuario = require('../modelos/usuario.model');
-const Carrito = require('../modelos/carrito.model')
+const Carrito = require('../modelos/carrito.model');
+const Factura = require('../modelos/factura.model')
 const bcrypt = require('bcrypt-nodejs');
 const jwt = require('../servicios/jwt');
 
@@ -176,6 +177,17 @@ function eliminarCuentaCliente(req,res){
     })
 }
 
+function iniciarSesionVerFactura(req,res){
+    if (req.user.rol != 'Cliente') return res.status({mensaje:'Esta funcion es para clientes'});
+    Factura.find({usuarioFactura:req.user.sub},(err, facturasEncontradas) => {
+        if (facturasEncontradas.length == 0) return res.status(500).send({mensaje:'Aun no hay facturas'})
+        if (err) return res.status(200).send({mensaje:'Error al hacer la peticion'});
+        if (!facturasEncontradas) return res.status(500).send({mensaje:'Error al obtener la peticion'})
+
+        return res.status(200).send(facturasEncontradas)
+    })
+}
+
 module.exports = {
     login,
     registrarCliente,
@@ -184,5 +196,6 @@ module.exports = {
     editarUsuario,
     eliminarUsuario,
     editarUsuarioCliente,
-    eliminarCuentaCliente
+    eliminarCuentaCliente,
+    iniciarSesionVerFactura
 }

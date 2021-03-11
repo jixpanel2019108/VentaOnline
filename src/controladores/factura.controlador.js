@@ -8,6 +8,7 @@ function generarFactura(req,res){
     var productoModel = new Producto();
 
     Carrito.findOne({usuarioCarrito: req.user.sub},(err, carritoEncontrado) => {
+        if (carritoEncontrado.listaProductos.length == 0) return res.status(500).send({mensaje:'El carrito esta vacio, Compre!!!'})
         if (err) return res.status(500).send({mensaje:'Error en la peticion'});
         if (!carritoEncontrado) return res.status(500).send({mensaje:'Error al obtener datos'})
         facturaModel.listaProductos = carritoEncontrado.listaProductos;
@@ -23,9 +24,11 @@ function generarFactura(req,res){
                 Producto.findById(elemento.idProducto,(err, productoAnterior) => {    
                     Producto.findByIdAndUpdate(elemento.idProducto,
                     {cantidad:productoAnterior.cantidad-elemento.cantidad,cantidadVendida:productoAnterior.cantidadVendida+elemento.cantidad},
+                    {new:true, useFindAndModify: false},
                     (err, productoActualizado) =>{ console.log(productoActualizado)})
                 })
             })
+            Carrito.findOneAndUpdate({usuarioCarrito:req.user.sub},{$set:{listaProductos:[]},total:0},(err,carritoVacio) => {})
 
             return res.status(200).send(facturaGuardada)
         })

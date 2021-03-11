@@ -1,5 +1,6 @@
 'use strict'
-var mongoose = require('mongoose');
+
+const mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var FacturaSchema = Schema({
@@ -8,7 +9,7 @@ var FacturaSchema = Schema({
         subTotal: Number,
         idProducto: {type: Schema.ObjectId, ref: 'productos'}
     }],
-    usuarioCarrito:{type: Schema.Types.ObjectId, ref:'usuarios'},
+    usuarioFactura:{type: Schema.Types.ObjectId, ref:'usuarios'},
     total: Number
 })
 

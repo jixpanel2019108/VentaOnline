@@ -25,7 +25,7 @@ function llevarProductoCarrito(req,res){
             //return console.log(productoSearch)
             if (!productoSearch){
                 //SIGNIFICA QUE AUN NO EXISTE EL PRODUCTO ESE EN EL CARRITO
-                Carrito.findOneAndUpdate({usuarioCarrito:idUsuario}, {$push:{listaProductos:{cantidad:integerCantidad, subTotal:subTotalFinal, idProducto:idProducto}}},
+                Carrito.findOneAndUpdate({usuarioCarrito:idUsuario}, {$push:{listaProductos:{cantidad:integerCantidad,precio:productoEncontrado.precio, subTotal:subTotalFinal, idProducto:idProducto}}},
                     {new:true, useFindAndModify: false}, (err, productoAgregado) => {
                     if (err) return res.status(500).send({mensaje:'Error en la peticion'});
                     if (!productoAgregado) return res.status(500).send({mensaje:'Error al ingresar los datos'});
