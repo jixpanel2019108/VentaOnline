@@ -88,7 +88,6 @@ function obtenerProductoIdCategoria(req,res){
 }
 
 function productosMasVendidos(req,res){
-    if (req.user.rol != 'Cliente') return res.status(500).send({mensaje:'Solo los clientes tiene esta funcion'})
     Producto.find({},{_id:0,producto:1,cantidadVendida:1},(err, productoEncontrado) => {
         if (err) return res.status(500).send({mensaje: 'Error al hacer la peticion'})
         if (!productoEncontrado) return res.status({mensaje:'Error al obtener productos'})
