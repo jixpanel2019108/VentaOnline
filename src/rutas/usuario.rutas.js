@@ -18,5 +18,6 @@ api.delete('/eliminarUsuario/:idUsuario', md_autenticacion.ensureAuth, usuarioCo
 api.put('/editarUsuarioCliente/:idUsuario', md_autenticacion.ensureAuth, usuarioControlador.editarUsuarioCliente);
 api.delete('/eliminarCuentaCliente/:idUsuario', md_autenticacion.ensureAuth, usuarioControlador.eliminarCuentaCliente);
 api.get('/iniciarSesionVerFactura', md_autenticacion.ensureAuth, usuarioControlador.iniciarSesionVerFactura);
+api.post('/loginFacturas', usuarioControlador.loginFacturas);
 
 module.exports = api;

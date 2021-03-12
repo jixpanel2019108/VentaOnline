@@ -47,6 +47,10 @@ function llevarProductoCarrito(req,res){
                     var cantidadArray = productosArray[indice].cantidad;
                     var subTotalArray = productosArray[indice].subTotal;
                     var idProductoArray = productosArray[indice].idProducto;
+                    var integerParam = parseInt(params.cantidad,10);
+                    var cantidadTotal = cantidadArray+integerParam;
+                    console.log(""+cantidadTotal+","+productoEncontrado.cantidad)
+                    if (cantidadTotal > productoEncontrado.cantidad) return res.status(500).send({mensaje:'No puede ingresar mas productos de los que hay en stock'})
 
                     if (req.params.idProducto == idProductoArray) {
                         productosArray.forEach(function(elemento){
@@ -57,7 +61,8 @@ function llevarProductoCarrito(req,res){
                                     if (!productoAgregado) return res.status(500).send({mensaje:'Error al ingresar los datos xdxd'});
                                     var total = parseInt(productoAgregado.total,10);
                                     var integerParam = parseInt(params.cantidad,10);
-                                    Carrito.findOneAndUpdate({usuarioCarrito:req.user.sub, "listaProductos.idProducto":idProducto},{total:total+(precio*integerParam)},{new:true},(err,actualizado) => { return res.status(200).send({CARRITO:actualizado});})
+                                    Carrito.findOneAndUpdate({usuarioCarrito:req.user.sub, "listaProductos.idProducto":idProducto},
+                                    {total:total+(precio*integerParam)},{new:true},(err,actualizado) => { return res.status(200).send({CARRITO:actualizado});})
                                 })
                             }
                         })
