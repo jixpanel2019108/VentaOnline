@@ -34,7 +34,6 @@ function llevarProductoCarrito(req,res){
                     var total = parseInt(productoAgregado.total,10);
                     var integerParam = parseInt(params.cantidad,10);
         
-                    //productoModel.findByIdAndUpdate(idProducto,{cantidad:productoEncontrado.cantidad-params.cantidad,cantidadVendida:productoEncontrado.cantidadVendida+integerParam},(err, productoActualizado) =>{})
                     Carrito.findOneAndUpdate({usuarioCarrito:req.user.sub, "listaProductos.idProducto":idProducto},{total:total+(precio*integerParam)},{new:true},(err,actualizado) => { return res.status(200).send({CARRITO:actualizado});})
                 })
             }else{
